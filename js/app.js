@@ -34,7 +34,7 @@ Enemy.prototype.update = function (dt) {
       if(this.x > 810){
         this.x = -120;
         // Call Function Alignment that gives a new Y axis random position.
-        this.y = alignment(enemyAlign);
+        this.y = randomAligment();
       }
 };
 
@@ -103,40 +103,39 @@ var allEnemies = [];
 
 // sets Y coordinate for each enemy to 55, 145, and 225 by using incrementer
 
-var enemyAlign = {
-  top : 55,
-  middle : 145,
-  bottom : 225
-};
 
 // This function pic a random property of Object EnemyAlign
 
 // in order to contain and distribute the enemies in the paved block.
-
 function alignment(positions) {
   var position = Object.keys(positions);
   return positions[position[position.length * Math.random() << 0]];
 }
 
-function enemyBorn(){
+function randomAligment() {
+  var enemyAlign = {
+    top : 55,
+    middle : 145,
+    bottom : 225
+  };
+  return alignment(enemyAlign);
+}
+
   for (var i = 0; i < 4; i++) {
-    var enemyY = alignment(enemyAlign);
+    var enemy = new Enemy(enemyX, enemyY, enemySpeed);
+    var enemyY = randomAligment();
     // sets X coordinate randomly
     var enemyX = -120;
     // sets speed to a base of 50 and then randomizes each enemy
     var enemySpeed = getRandomInt(config.minSpeed, config.maxSpeed);
     // push enemies into allEnemies array, 4 enemies total
-    allEnemies.push(new Enemy(enemyX, enemyY, enemySpeed));
+    allEnemies.push(enemy);
   }
-}
-
-enemyBorn();
 
 
 // Place the player object in a variable called player
 
 //The Random number function gives the player a random position on the X Axis
-
 var player = new Player(config.playerX, 0);
 
 
