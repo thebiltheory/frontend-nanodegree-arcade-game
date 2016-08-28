@@ -1,41 +1,41 @@
-
+"use strict";
 //------- Config Function
-
 // Returns a random integer between min (included) and max (excluded)
 // Using Math.round() will give you a non-uniform distribution!
 function getRandomInt(min, max) {
-  return Math.floor(Math.random() * (max - min + 1) - min);
+    return Math.floor(Math.random() * (max - min + 1) - min);
 }
 
 //----- Game Config
 //TODO: Refactor config in external file
 var config = {
-        playerX: getRandomInt(30,780),
-        minSpeed: 50,
-        maxSpeed: 300,
-        enemyExit: 810,
-        enemyStart:-120,
-        initScore:0,
-        playerHeight:171,
-        playerWidth:67,
-        enemyHeight:71,
-        enemyWidth:101,
-        enemyNumber:5
+    playerX: getRandomInt(30, 780),
+    minSpeed: 50,
+    maxSpeed: 300,
+    enemyExit: 810,
+    enemyStart: -120,
+    initScore: 0,
+    playerHeight: 50,
+    playerWidth: 40,
+    enemyHeight: 71,
+    enemyWidth: 101,
+    enemyNumber: 5,
+    lives: 3
 };
 
 var hitbox = {
-      enemyX : null,
-      enemyY : null,
-      playerX: null,
-      playerY: null,
-      life: "alive"
+    enemyX: null,
+    enemyY: null,
+    playerX: null,
+    playerY: null,
+    life: "alive"
 };
 
 // -------- ENEMY
 
 //Class of our Enemies
 
-var Enemy = function (x, y, speed) {
+var Enemy = function(x, y, speed) {
     this.sprite = "images/enemy-bug.png";
     this.y = y;
     this.x = x;
@@ -48,33 +48,33 @@ var Enemy = function (x, y, speed) {
 
 // Parameter: dt, a time delta between ticks
 
-Enemy.prototype.update = function (dt) {
-      this.x += this.speed * dt;
-      if(this.x > config.enemyExit){
+Enemy.prototype.update = function(dt) {
+    this.x += this.speed * dt;
+    if (this.x > config.enemyExit) {
         this.x = config.enemyStart;
         // Call Function Alignment that gives a new Y axis random position.
         this.y = randomAligment();
-      }
-      hitbox.enemyX = this.x;
-      hitbox.enemyY = this.y;
+    }
+    hitbox.enemyX = this.x;
+    hitbox.enemyY = this.y;
 
-      // console.log("player: ",hitbox.playerX, hitbox.playerY);
-      // console.log("enemy: ",hitbox.enemyX, hitbox.enemyY);
+    // console.log("player: ",hitbox.playerX, hitbox.playerY);
+    // console.log("enemy: ",hitbox.enemyX, hitbox.enemyY);
 
-      // Collision Detection
+    // Collision Detection
     if (hitbox.playerX < hitbox.enemyX + config.enemyWidth && hitbox.playerX + config.playerWidth > hitbox.enemyX && hitbox.playerY < hitbox.enemyY + config.enemyHeight && config.playerHeight + hitbox.playerX > hitbox.enemyY) {
-          console.log("Ooooops!!! Aouch");
-          hitbox.life = "dead";
+        console.log("Diiiiiiiiiiiieeeee");
+        hitbox.life = "dead";
 
-      }
-      // console.log("Player: ", this.y, this.x, " | Enemy: ", hitbox.enemyY, hitbox.enemyX);
+    }
+    // console.log("Player: ", this.y, this.x, " | Enemy: ", hitbox.enemyY, hitbox.enemyX);
 
 
 };
 
 // Draw the enemy on the screen, required method for game
 
-Enemy.prototype.render = function () {
+Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
@@ -88,60 +88,62 @@ Enemy.prototype.render = function () {
 
 // a handleInput() method.
 
-var Player = function (x, y) {
+var Player = function(x, y) {
     this.sprite = "images/char-boy.png";
     this.x = x;
     this.y = y;
+    this.lives = config.lives;
     this.height = config.playerHeight;
     this.width = config.playerWidth;
     this.score = config.initScore;
 };
 
-Player.prototype.update = function () {
-  //Player reach water
-  if(this.y <= 0) {
-    this.score += 10;
-    this.y = 404;
-  }
-  hitbox.playerX = this.x;
-  hitbox.playerY = this.y;
-
-  if(hitbox.life === "dead") {
-    //TODO: implement lives
-    // this.lives -= 1;
-    hitbox.life = "alive";
-    this.y = 404;
-    console.log(hitbox.life);
-  }
+Player.prototype.update = function() {
+    //Player reach water
+    if (this.y <= 0) {
+        this.score += 10;
+        this.y = 404;
+    }
+    hitbox.playerX = this.x;
+    hitbox.playerY = this.y;
+    //
+    if (hitbox.life === "dead") {
+        //TODO: implement lives
+        config.lives -= 1;
+        hitbox.life = "alive";
+        this.y = 404;
+        console.log("Yayyyy,", hitbox.life);
+        console.log("Lives", config.lives);
+    }
 
 };
 
 
-Player.prototype.render = function () {
-  ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+Player.prototype.render = function() {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
-Player.prototype.handleInput = function (key) {
-  switch (key) {
-    case 'up':
-      this.y -= 40;
-      break;
+Player.prototype.handleInput = function(key) {
+    switch (key) {
+        case 'up':
+            this.y -= 40;
+            break;
 
-    case 'down':
-      this.y += 40;
-      break;
+        case 'down':
+            this.y += 40;
+            break;
 
-    case 'left':
-      this.x -= 40;
-      break;
+        case 'left':
+            this.x -= 40;
+            break;
 
-    case 'right':
-      this.x += 40;
-      break;
+        case 'right':
+            this.x += 40;
+            break;
 
-    default:
-      break;
-  }
+        default:
+            break;
+    }
 };
 
 // Now instantiate your objects.
@@ -157,20 +159,20 @@ var allEnemies = [];
 
 // in order to contain and distribute the enemies in the paved block.
 function alignment(positions) {
-  var position = Object.keys(positions);
-  return positions[position[position.length * Math.random() << 0]];
+    var position = Object.keys(positions);
+    return positions[position[position.length * Math.random() << 0]];
 }
 
 function randomAligment() {
-  var enemyAlign = {
-    top : 55,
-    middle : 145,
-    bottom : 225
-  };
-  return alignment(enemyAlign);
+    var enemyAlign = {
+        top: 55,
+        middle: 145,
+        bottom: 225
+    };
+    return alignment(enemyAlign);
 }
 
-  for (var i = 0; i < config.enemyNumber; i++) {
+for (var i = 0; i < config.enemyNumber; i++) {
     var enemy = new Enemy(enemyX, enemyY, enemySpeed);
     var enemyY = randomAligment();
     // sets X coordinate randomly
@@ -179,14 +181,10 @@ function randomAligment() {
     var enemySpeed = getRandomInt(config.minSpeed, config.maxSpeed);
     // push enemies into allEnemies array, 4 enemies total
     allEnemies.push(enemy);
-  }
+}
 
 
 // Place the player object in a variable called player
-
-
-
-
 
 //The Random number function gives the player a random position on the X Axis
 var player = new Player(config.playerX, 0);
