@@ -6,21 +6,27 @@ function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1) - min);
 }
 
+// function write (text, x, y) {
+//   ctx.font = "30px arcadeclassic";
+//   ctx.fillStyle = "black";
+//   ctx.fillText(text, x, y);
+// };
+
 //----- Game Config
 //TODO: Refactor config in external file
 var config = {
     playerX: getRandomInt(30, 780),
     startPosition: 404,
-    minSpeed: 50,
-    maxSpeed: 300,
+    minSpeed: 300,
+    maxSpeed: 900,
     enemyExit: 810, // Exit point of the enemy
     enemyStart: -120, // Starting point of the enemy
     initScore: 0,
     playerHeight: 50,
-    playerWidth: 40,
+    playerWidth: 60,
     enemyHeight: 71,
     enemyWidth: 101,
-    enemyNumber: 5, // Number of enemies
+    enemyNumber: 20, // Number of enemies
     lives: 3 //Lives of the player
 };
 
@@ -33,6 +39,8 @@ var hitbox = {
 };
 
 // -------- ENEMY
+
+
 
 //Class of our Enemies
 
@@ -85,8 +93,8 @@ Enemy.prototype.render = function() {
 // Now write your own player class
 
 // This class requires an update(), render() and
-
 // a handleInput() method.
+
 
 var Player = function(x, y) {
     this.sprite = "images/char-boy.png";
@@ -108,6 +116,10 @@ Player.prototype.update = function() {
     hitbox.playerY = this.y;
 };
 
+Player.prototype.state = function(lives) {
+
+};
+
 Player.prototype.life = function(life, lives) {
     if (life === false && lives > 0) {
         config.lives--; //
@@ -115,13 +127,16 @@ Player.prototype.life = function(life, lives) {
         this.y = config.startPosition; //Restart
         console.log("Yayyyy,", life);
         console.log("Lives", lives);
+        player.state(config.lives);
     } else {
         player.gameOver();
     }
 };
 
 Player.prototype.gameOver = function() {
-    // this.y = config.startPosition; //Restar
+    player.state(config.lives);
+    config.lives = "Game Over";
+    this.y = config.startPosition; //Restart
     console.log("Game Over");
     // alert("Game Over");
 };
