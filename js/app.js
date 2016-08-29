@@ -10,17 +10,18 @@ function getRandomInt(min, max) {
 //TODO: Refactor config in external file
 var config = {
     playerX: getRandomInt(30, 780),
+    startPosition: 404,
     minSpeed: 50,
     maxSpeed: 300,
-    enemyExit: 810,
-    enemyStart: -120,
+    enemyExit: 810, // Exit point of the enemy
+    enemyStart: -120, // Starting point of the enemy
     initScore: 0,
     playerHeight: 50,
     playerWidth: 40,
     enemyHeight: 71,
     enemyWidth: 101,
-    enemyNumber: 5,
-    lives: 3
+    enemyNumber: 5, // Number of enemies
+    lives: 3 //Lives of the player
 };
 
 var hitbox = {
@@ -28,7 +29,7 @@ var hitbox = {
     enemyY: null,
     playerX: null,
     playerY: null,
-    life: "alive"
+    life: true
 };
 
 // -------- ENEMY
@@ -55,17 +56,16 @@ Enemy.prototype.update = function(dt) {
         // Call Function Alignment that gives a new Y axis random position.
         this.y = randomAligment();
     }
+
     hitbox.enemyX = this.x;
     hitbox.enemyY = this.y;
-
-    // console.log("player: ",hitbox.playerX, hitbox.playerY);
-    // console.log("enemy: ",hitbox.enemyX, hitbox.enemyY);
 
     // Collision Detection
     if (hitbox.playerX < hitbox.enemyX + config.enemyWidth && hitbox.playerX + config.playerWidth > hitbox.enemyX && hitbox.playerY < hitbox.enemyY + config.enemyHeight && config.playerHeight + hitbox.playerX > hitbox.enemyY) {
         console.log("Diiiiiiiiiiiieeeee");
-        hitbox.life = "dead";
-
+        hitbox.life = false;
+        // Fires player lifes when collision is detected
+        player.life(hitbox.life, config.lives);
     }
     // console.log("Player: ", this.y, this.x, " | Enemy: ", hitbox.enemyY, hitbox.enemyX);
 
@@ -106,16 +106,24 @@ Player.prototype.update = function() {
     }
     hitbox.playerX = this.x;
     hitbox.playerY = this.y;
-    //
-    if (hitbox.life === "dead") {
-        //TODO: implement lives
-        config.lives -= 1;
-        hitbox.life = "alive";
-        this.y = 404;
-        console.log("Yayyyy,", hitbox.life);
-        console.log("Lives", config.lives);
-    }
+};
 
+Player.prototype.life = function(life, lives) {
+    if (life === false && lives > 0) {
+        config.lives--; //
+        hitbox.life = true; //Reborn
+        this.y = config.startPosition; //Restart
+        console.log("Yayyyy,", life);
+        console.log("Lives", lives);
+    } else {
+        player.gameOver();
+    }
+};
+
+Player.prototype.gameOver = function() {
+    // this.y = config.startPosition; //Restar
+    console.log("Game Over");
+    // alert("Game Over");
 };
 
 
