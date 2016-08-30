@@ -1,6 +1,22 @@
-frontend-nanodegree-arcade-game
-===============================
+# Frontend Nanodegree Arcade Game
+---
 
-Students should use this [rubric](https://review.udacity.com/#!/projects/2696458597/rubric) for self-checking their submission. Make sure the functions you write are **object-oriented** - either class functions (like Player and Enemy) or class prototype functions such as Enemy.prototype.checkCollisions, and that the keyword 'this' is used appropriately within your class and class prototype functions to refer to the object the function is called upon. Also be sure that the **readme.md** file is updated with your instructions on both how to 1. Run and 2. Play your arcade game.
+1. Clone the Repo
+```bash
+git clone https://github.com/thebiltheory/frontend-nanodegree-arcade-game.git arcade-game
+```
+2. Enter the directory
+```
+cd arcade-game
+```
+3. Open the index File.
+```
+open index.html
+```
 
-For detailed instructions on how to get started, check out this [guide](https://docs.google.com/document/d/1v01aScPjSWCCWQLIpFqvg3-vXLH2e8_SZQKC8jNO0Dc/pub?embedded=true).
+
+Resources that helped:
+---
+* [Learn HTML5 Graphis and Animation](https://egghead.io/lessons/javascript-introduction-to-html-canvas-element?course=learn-html5-graphics-and-animation)
+* [MDN Game Development](https://developer.mozilla.org/en-US/docs/Games)
+* [Pluralsight](pluralsight.com)
