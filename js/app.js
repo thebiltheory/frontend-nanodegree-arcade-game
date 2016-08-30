@@ -28,7 +28,7 @@ var player;
   var config = {
       playerX: getRandomInt(30, 780),
       initScore: 0,
-      enemyNumber: 20,
+      enemyNumber: 6,
       lives: 3 //Lives of the player
   };
 
@@ -42,7 +42,7 @@ var player;
     TOP: 55,
     MIDDLE: 145,
     BOTTOM: 225,
-    STEP_DISTANCE: 40,
+    STEP_DISTANCE: 101,
     PLAYERHEIGHT: 201,
     PLAYERWIDTH: 101,
     ENEMYHEIGHT: 71,
@@ -130,8 +130,12 @@ Enemy.prototype.collision = function() {
   Player.prototype.update = function() {
       //If the Player reach the water he his teleported back on the grass ( Y: 404 )
       // Add 10 Points on every dive in the water
+      //TODO Implement Score
       if (this.y <= 0) {
           this.score += 10;
+          //Add 1 Enemies on each cross
+          config.enemyNumber++;
+          window.console.log(config.enemyNumber);
           this.y = 404;
       }
   };
