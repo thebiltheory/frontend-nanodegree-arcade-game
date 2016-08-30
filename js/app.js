@@ -33,8 +33,8 @@ var player;
       enemyExit: 810, // Exit point of the enemy
       enemyStart: -120, // Starting point of the enemy
       initScore: 0,
-      playerHeight: 50,
-      playerWidth: 60,
+      playerHeight: 201,
+      playerWidth: 101,
       enemyHeight: 71,
       enemyWidth: 101,
       enemyNumber: 20, // Number of enemies
@@ -54,7 +54,8 @@ var player;
   var CONSTANTS = {
     TOP: 55,
     MIDDLE: 145,
-    BOTTOM: 225
+    BOTTOM: 225,
+    STEP_DISTANCE: 40
   };
 
   // -------- ENEMY
@@ -75,7 +76,7 @@ var player;
       if (this.x > config.enemyExit) {
           this.x = config.enemyStart;
           // Call Function Alignment that gives a new Y axis random position.
-          this.y = randomAligment();
+          this.y = this.  randomAligment();
       }
 
       //Update value of this Needed for the collision Detection
@@ -94,6 +95,16 @@ var player;
           player.life(hitbox.life, config.lives);
       }
       // console.log("Player: ", this.y, this.x, " | Enemy: ", hitbox.enemyY, hitbox.enemyX);
+  };
+
+  // sets Y coordinate for each enemy to 55, 145, and 225 by using incrementer
+
+  // This function pic a random property of Object EnemyAlign
+  // in order to contain and distribute the enemies in the paved block.
+  Enemy.prototype.randomAligment = function () {
+      var alignment = [CONSTANTS.TOP, CONSTANTS.MIDDLE, CONSTANTS.BOTTOM];
+      // Math.ceil(Math.random()) doesn't work in this case, I have no Idea why.
+      return alignment[alignment.length * Math.random() << 0];
   };
 
   // Render the enemy on the screen by calling drawImage canvas API method
@@ -144,9 +155,9 @@ var player;
           this.y = config.startPosition; //Restart
           console.log("Yayyyy,", life);
           console.log("Lives", lives);
-          player.state(config.lives);
+          this.state(config.lives);
       } else {
-          player.gameOver();
+          this.gameOver();
       }
   };
 
@@ -168,43 +179,27 @@ var player;
 
   // Detect any key pressed. and move the player 40px each time.
   Player.prototype.handleInput = function(key) {
-      switch (key) {
-          case 'up':
-              this.y -= 40;
-              break;
-
-          case 'down':
-              this.y += 40;
-              break;
-
-          case 'left':
-              this.x -= 40;
-              break;
-
-          case 'right':
-              this.x += 40;
-              break;
-
-          default:
-              break;
-      }
+    var step = CONSTANTS.STEP_DISTANCE;
+    if(this.y < ctx.canvas.height && key === "up") {
+      this.y -= step;
+    } else if(this.y < config.startPosition && key === "down"){
+      this.y += step;
+    } else if(this.x > ctx.canvas.scrollLeft && key === "left"){
+      this.x -= step;
+    } else if(this.x < ctx.canvas.width - config.playerWidth && key === "right"){
+      this.x += step;
+    } else {
+       window.console.log("Where do you thinkg you're going?");
+    }
   };
 
 
-  // sets Y coordinate for each enemy to 55, 145, and 225 by using incrementer
 
-  // This function pic a random property of Object EnemyAlign
-  // in order to contain and distribute the enemies in the paved block.
-  function randomAligment() {
-      var alignment = [CONSTANTS.TOP, CONSTANTS.MIDDLE, CONSTANTS.BOTTOM];
-      // Math.ceil(Math.random()) doesn't work in this case, I have no Idea why.
-      return alignment[alignment.length * Math.random() << 0];
-  }
 
   // Generates my enemies and push them in the Enemy Array outside of this closure
   for (var i = 0; i < config.enemyNumber; i++) {
       var enemy = new Enemy(enemyX, enemyY, enemySpeed);
-      var enemyY = randomAligment();
+      var enemyY = enemy.randomAligment();
       // sets X coordinate randomly
       var enemyX = config.enemyStart;
       // sets speed to a base of 50 and then randomizes each enemy
