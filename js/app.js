@@ -27,26 +27,13 @@ var player;
   //TODO: Refactor config in external file
   var config = {
       playerX: getRandomInt(30, 780),
-      startPosition: 404,
-      minSpeed: 300,
-      maxSpeed: 900,
-      enemyExit: 810, // Exit point of the enemy
-      enemyStart: -120, // Starting point of the enemy
       initScore: 0,
-      playerHeight: 201,
-      playerWidth: 101,
-      enemyHeight: 71,
-      enemyWidth: 101,
-      enemyNumber: 20, // Number of enemies
+      enemyNumber: 20,
       lives: 3 //Lives of the player
   };
 
   // The Hitbox handles are the base properties to be handled outside of the method closure
   var hitbox = {
-      enemyX: null,
-      enemyY: null,
-      playerX: null,
-      playerY: null,
       life: true
   };
 
@@ -55,7 +42,16 @@ var player;
     TOP: 55,
     MIDDLE: 145,
     BOTTOM: 225,
-    STEP_DISTANCE: 40
+    STEP_DISTANCE: 40,
+    PLAYERHEIGHT: 201,
+    PLAYERWIDTH: 101,
+    ENEMYHEIGHT: 71,
+    STARTPOSITION: 404,
+    MINSPEED: 300,
+    MAXSPEED: 900,
+    ENEMYEXIT: 810,
+    ENEMYSTART: -120,
+    ENEMYWIDTH: 101
   };
 
   // -------- ENEMY
@@ -64,8 +60,8 @@ var player;
       this.sprite = "images/enemy-bug.png";
       this.y = y;
       this.x = x;
-      this.height = config.enemyHeight;
-      this.width = config.enemyWidth;
+      this.height = CONSTANTS.ENEMYHEIGHT;
+      this.width = CONSTANTS.ENEMYWIDTH;
       this.speed = speed;
   };
 
@@ -73,29 +69,31 @@ var player;
   // Update the enemy x position and call randomAlignment function to make him start on another Y Point
   Enemy.prototype.update = function(dt) {
       this.x += this.speed * dt;
-      if (this.x > config.enemyExit) {
-          this.x = config.enemyStart;
+      if (this.x > CONSTANTS.ENEMYEXIT) {
+          this.x = CONSTANTS.ENEMYSTART;
           // Call Function Alignment that gives a new Y axis random position.
-          this.y = this.  randomAligment();
+          this.y = this.randomAligment();
       }
+      // Fire the Collision Method on Collision Detection
+      this.collision();
 
-      //Update value of this Needed for the collision Detection
-      hitbox.enemyX = this.x;
-      hitbox.enemyY = this.y;
+    };
 
-      // Collision Detection
-      // TODO Make a function of this mess
-      if (hitbox.playerX < hitbox.enemyX + config.enemyWidth &&
-          hitbox.playerX + config.playerWidth > hitbox.enemyX &&
-          hitbox.playerY < hitbox.enemyY + config.enemyHeight &&
-          config.playerHeight + hitbox.playerX > hitbox.enemyY) {
-          window.console.log("Diiiiiiiiiiiieeeee");
-          hitbox.life = false;
-          // Fires player lifes when collision is detected
-          player.life(hitbox.life, config.lives);
-      }
-      // console.log("Player: ", this.y, this.x, " | Enemy: ", hitbox.enemyY, hitbox.enemyX);
-  };
+Enemy.prototype.collision = function() {
+  // Collision Detection
+  // TODO Make a function of this mess
+  if (player.x < this.x + CONSTANTS.ENEMYWIDTH &&
+      player.x + CONSTANTS.PLAYERWIDTH > this.x &&
+      player.y < this.y + CONSTANTS.ENEMYHEIGHT &&
+      CONSTANTS.PLAYERHEIGHT + player.x > this.y) {
+      window.console.log("Diiiiiiiiiiiieeeee");
+      hitbox.life = false;
+      // Fires player lifes when collision is detected
+      player.life(hitbox.life, config.lives);
+  }
+};
+
+
 
   // sets Y coordinate for each enemy to 55, 145, and 225 by using incrementer
 
@@ -123,8 +121,8 @@ var player;
       this.x = x;
       this.y = y;
       this.lives = config.lives;
-      this.height = config.playerHeight;
-      this.width = config.playerWidth;
+      this.height = CONSTANTS.PLAYERHEIGHT;
+      this.width = CONSTANTS.PLAYERWIDTH;
       this.score = config.initScore;
   };
 
@@ -136,9 +134,6 @@ var player;
           this.score += 10;
           this.y = 404;
       }
-      //Like in Enemy update method, this update the x and y position of the player
-      hitbox.playerX = this.x;
-      hitbox.playerY = this.y;
   };
 
   Player.prototype.state = function(lives) {
@@ -152,7 +147,7 @@ var player;
       if (life === false && lives > 0) {
           config.lives--; //
           hitbox.life = true; //Reborn
-          this.y = config.startPosition; //Restart
+          this.y = CONSTANTS.STARTPOSITION; //Restart
           console.log("Yayyyy,", life);
           console.log("Lives", lives);
           this.state(config.lives);
@@ -167,9 +162,8 @@ var player;
   Player.prototype.gameOver = function() {
       player.state(config.lives);
       config.lives = "Game Over";
-      this.y = config.startPosition; //Restart
+      this.y = CONSTANTS.STARTPOSITION; //Restart
       console.log("Game Over");
-      // alert("Game Over");
   };
 
   // Render Player on the screen
@@ -182,32 +176,28 @@ var player;
     var step = CONSTANTS.STEP_DISTANCE;
     if(this.y < ctx.canvas.height && key === "up") {
       this.y -= step;
-    } else if(this.y < config.startPosition && key === "down"){
+    } else if(this.y < CONSTANTS.STARTPOSITION && key === "down"){
       this.y += step;
     } else if(this.x > ctx.canvas.scrollLeft && key === "left"){
       this.x -= step;
-    } else if(this.x < ctx.canvas.width - config.playerWidth && key === "right"){
+    } else if(this.x < ctx.canvas.width - CONSTANTS.PLAYERWIDTH && key === "right"){
       this.x += step;
     } else {
        window.console.log("Where do you thinkg you're going?");
     }
   };
 
-
-
-
   // Generates my enemies and push them in the Enemy Array outside of this closure
   for (var i = 0; i < config.enemyNumber; i++) {
       var enemy = new Enemy(enemyX, enemyY, enemySpeed);
       var enemyY = enemy.randomAligment();
       // sets X coordinate randomly
-      var enemyX = config.enemyStart;
+      var enemyX = CONSTANTS.ENEMYSTART;
       // sets speed to a base of 50 and then randomizes each enemy
-      var enemySpeed = getRandomInt(config.minSpeed, config.maxSpeed);
+      var enemySpeed = getRandomInt(CONSTANTS.MINSPEED, CONSTANTS.MAXSPEED);
       // push enemies into allEnemies array, 4 enemies total
       allEnemies.push(enemy);
   }
-
 
   // Initialize player
   // var player is initialised at line 8.
@@ -221,7 +211,6 @@ var player;
           39: 'right',
           40: 'down'
       };
-
       player.handleInput(allowedKeys[e.keyCode]);
   });
 })(window);
