@@ -1,19 +1,22 @@
+//TODO: Timed Levels
+//TODO: Different Modes
+
 // Place all enemy objects in an array called allEnemies
 var allEnemies = [];
 
-//The Random number function gives the player a random position on the X Axis
+//Initiate player outside window closure required by strict mode.
 var player;
-
 
 (function(window){
   "use strict";
+
   //------- Config Function
   // Returns a random integer between min (included) and max (excluded)
-  // Using Math.round() will give you a non-uniform distribution!
   function getRandomInt(min, max) {
       return Math.floor(Math.random() * (max - min + 1) - min);
   }
 
+  //TODO: Write a function that can be called to write on the canvas
   // function write (text, x, y) {
   //   ctx.font = "30px arcadeclassic";
   //   ctx.fillStyle = "black";
@@ -38,6 +41,7 @@ var player;
       lives: 3 //Lives of the player
   };
 
+  // The Hitbox handles are the base properties to be handled outside of the method closure
   var hitbox = {
       enemyX: null,
       enemyY: null,
@@ -46,6 +50,7 @@ var player;
       life: true
   };
 
+  // The constants that contains the enemys in the paved block.
   var CONSTANTS = {
     TOP: 55,
     MIDDLE: 145,
@@ -53,11 +58,7 @@ var player;
   };
 
   // -------- ENEMY
-
-
-
   //Class of our Enemies
-
   var Enemy = function(x, y, speed) {
       this.sprite = "images/enemy-bug.png";
       this.y = y;
@@ -67,10 +68,8 @@ var player;
       this.speed = speed;
   };
 
-  // Update the enemy's position, required method for game
-
   // Parameter: dt, a time delta between ticks
-
+  // Update the enemy x position and call randomAlignment function to make him start on another Y Point
   Enemy.prototype.update = function(dt) {
       this.x += this.speed * dt;
       if (this.x > config.enemyExit) {
@@ -79,41 +78,35 @@ var player;
           this.y = randomAligment();
       }
 
+      //Update value of this Needed for the collision Detection
       hitbox.enemyX = this.x;
       hitbox.enemyY = this.y;
 
       // Collision Detection
+      // TODO Make a function of this mess
       if (hitbox.playerX < hitbox.enemyX + config.enemyWidth &&
           hitbox.playerX + config.playerWidth > hitbox.enemyX &&
           hitbox.playerY < hitbox.enemyY + config.enemyHeight &&
           config.playerHeight + hitbox.playerX > hitbox.enemyY) {
-      // if (collides(hitbox, config)) {
           window.console.log("Diiiiiiiiiiiieeeee");
           hitbox.life = false;
           // Fires player lifes when collision is detected
           player.life(hitbox.life, config.lives);
       }
       // console.log("Player: ", this.y, this.x, " | Enemy: ", hitbox.enemyY, hitbox.enemyX);
-
-
   };
 
-  // Draw the enemy on the screen, required method for game
-
+  // Render the enemy on the screen by calling drawImage canvas API method
   Enemy.prototype.render = function() {
       ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
   };
 
 
-
   // --------- PLAYER
 
-  // Now write your own player class
-
-  // This class requires an update(), render() and
-  // a handleInput() method.
-
-
+  // Class of our player
+  //TODO Choose between multiple players
+  //TODO Finish Implement score
   var Player = function(x, y) {
       this.sprite = "images/char-boy.png";
       this.x = x;
@@ -124,20 +117,26 @@ var player;
       this.score = config.initScore;
   };
 
+  //Update the player every X seconds
   Player.prototype.update = function() {
-      //Player reach water
+      //If the Player reach the water he his teleported back on the grass ( Y: 404 )
+      // Add 10 Points on every dive in the water
       if (this.y <= 0) {
           this.score += 10;
           this.y = 404;
       }
+      //Like in Enemy update method, this update the x and y position of the player
       hitbox.playerX = this.x;
       hitbox.playerY = this.y;
   };
 
   Player.prototype.state = function(lives) {
-
+    // will be used for statistics of the player
+    //TODO Implement ( in this order ) Lives - Time - Score
   };
 
+  //Liiife, Check if the player is dead or not.
+  // If the player is died more than 3 times ( if lives is less than 0 -> Game Over)
   Player.prototype.life = function(life, lives) {
       if (life === false && lives > 0) {
           config.lives--; //
@@ -151,6 +150,9 @@ var player;
       }
   };
 
+  //Restart the player on the grass when Game Over
+  //TODO Show Game over screen
+  //TODO Implement Start Again Button
   Player.prototype.gameOver = function() {
       player.state(config.lives);
       config.lives = "Game Over";
@@ -159,11 +161,12 @@ var player;
       // alert("Game Over");
   };
 
-
+  // Render Player on the screen
   Player.prototype.render = function() {
       ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
   };
 
+  // Detect any key pressed. and move the player 40px each time.
   Player.prototype.handleInput = function(key) {
       switch (key) {
           case 'up':
@@ -187,18 +190,18 @@ var player;
       }
   };
 
-  // Now instantiate your objects.
 
   // sets Y coordinate for each enemy to 55, 145, and 225 by using incrementer
-
 
   // This function pic a random property of Object EnemyAlign
   // in order to contain and distribute the enemies in the paved block.
   function randomAligment() {
       var alignment = [CONSTANTS.TOP, CONSTANTS.MIDDLE, CONSTANTS.BOTTOM];
+      // Math.ceil(Math.random()) doesn't work in this case, I have no Idea why.
       return alignment[alignment.length * Math.random() << 0];
   }
 
+  // Generates my enemies and push them in the Enemy Array outside of this closure
   for (var i = 0; i < config.enemyNumber; i++) {
       var enemy = new Enemy(enemyX, enemyY, enemySpeed);
       var enemyY = randomAligment();
@@ -211,15 +214,11 @@ var player;
   }
 
 
-  // Place the player object in a variable called player
-
-  // initialize player
+  // Initialize player
+  // var player is initialised at line 8.
   player = new Player(config.playerX, 0);
 
-  // This listens for key presses and sends the keys to your
-
   // Player.handleInput() method. You don't need to modify this.
-
   document.addEventListener('keyup', function(e) {
       var allowedKeys = {
           37: 'left',
@@ -230,4 +229,4 @@ var player;
 
       player.handleInput(allowedKeys[e.keyCode]);
   });
-})(window)
+})(window);
