@@ -43,7 +43,8 @@ var player;
     TOP: 55,
     MIDDLE: 145,
     BOTTOM: 225,
-    STEP_DISTANCE: 101,
+    Y_STEP_DISTANCE: 83,
+    X_STEP_DISTANCE: 101,
     PLAYERHEIGHT: 201,
     PLAYERWIDTH: 101,
     ENEMYHEIGHT: 71,
@@ -165,7 +166,7 @@ Enemy.prototype.collision = function() {
   //TODO Show Game over screen
   //TODO Implement Start Again Button
   Player.prototype.gameOver = function() {
-      this.state(config.lives);
+    this.state(config.lives);
       config.lives = "Game Over";
       this.y = CONSTANTS.STARTPOSITION; //Restart
       console.log("Game Over");
@@ -178,15 +179,16 @@ Enemy.prototype.collision = function() {
 
   // Detect any key pressed. and move the player 40px each time.
   Player.prototype.handleInput = function(key) {
-    var step = CONSTANTS.STEP_DISTANCE;
+    var yStep = CONSTANTS.Y_STEP_DISTANCE;
+    var xStep = CONSTANTS.X_STEP_DISTANCE;
     if(this.y < ctx.canvas.height && key === "up") {
-      this.y -= step;
+      this.y -= yStep;
     } else if(this.y < CONSTANTS.STARTPOSITION && key === "down"){
-      this.y += step;
+      this.y += yStep;
     } else if(this.x > ctx.canvas.scrollLeft && key === "left"){
-      this.x -= step;
+      this.x -= xStep;
     } else if(this.x < ctx.canvas.width - CONSTANTS.PLAYERWIDTH && key === "right"){
-      this.x += step;
+      this.x += xStep;
     } else {
        window.console.log("Where do you thinkg you're going?");
     }
