@@ -26,7 +26,8 @@ var player;
   //----- Game Config
   //TODO: Refactor config in external file
   var config = {
-      playerX: getRandomInt(30, 780),
+      playerX:404,
+      // playerX: getRandomInt(30, 780),
       initScore: 0,
       enemyNumber: 6,
       lives: 3 //Lives of the player
@@ -164,7 +165,7 @@ Enemy.prototype.collision = function() {
   //TODO Show Game over screen
   //TODO Implement Start Again Button
   Player.prototype.gameOver = function() {
-      player.state(config.lives);
+      this.state(config.lives);
       config.lives = "Game Over";
       this.y = CONSTANTS.STARTPOSITION; //Restart
       console.log("Game Over");
