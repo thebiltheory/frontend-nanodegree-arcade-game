@@ -18,9 +18,8 @@ open index.html
 ---
 Use the arrows
 ```
-	↑
+↑
 ← ↓ →
-
 ```
 to guide him have dive into water without being hit/killed by the bugs.   
 
