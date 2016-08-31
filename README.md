@@ -14,6 +14,16 @@ cd arcade-game
 open index.html
 ```
 
+4. Game instructions
+---
+Use the arrows
+```
+	↑
+← ↓ →
+
+```
+to guide him have dive into water without being hit/killed by the bugs.   
+
 
 Resources that helped:
 ---
