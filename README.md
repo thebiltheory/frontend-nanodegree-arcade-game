@@ -2,14 +2,17 @@
 ---
 
 1. Clone the Repo
+
 ```bash
 git clone https://github.com/thebiltheory/frontend-nanodegree-arcade-game.git arcade-game
 ```
 2. Enter the directory
+
 ```
 cd arcade-game
 ```
 3. Open the index File.
+
 ```
 open index.html
 ```
@@ -18,7 +21,7 @@ open index.html
 ---
 Use the arrows
 ```
-↑
+  ↑
 ← ↓ →
 ```
 to guide him have dive into water without being hit/killed by the bugs.   
